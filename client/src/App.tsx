@@ -3,6 +3,8 @@ import Wrapper from "./Wrapper";
 import Dashboard from "./Dashboard";
 import Boards from "./Boards";
 
+import Createboards from "@/context/Createboards";
+
 function App() {
   const router = createBrowserRouter([
     {
@@ -20,7 +22,11 @@ function App() {
       ],
     },
   ]);
-  return <RouterProvider router={router} />;
+  return (
+    <Createboards>
+      <RouterProvider router={router} />
+    </Createboards>
+  );
 }
 
 export default App;
