@@ -1,14 +1,16 @@
 import express from "express";
-import Database from "../config/database";
 import Repositories from "../repositories/repositories";
+import AllController from "../controller/all.controller";
+import AllService from "../service/all.service";
 
 const route = express.Router();
 
+const repositories = new Repositories();
+const services = new AllService(repositories);
+const controller = new AllController(services);
 
-const repositories = new Repositories(Database);
+route.get("/boards", controller.getBoards);
+route.post("/postBoards", controller.insertBoards);
 
-route.get("/", (req, res) => {
-   res.json({message: "HELLO"})
-});
 
 export default route;
