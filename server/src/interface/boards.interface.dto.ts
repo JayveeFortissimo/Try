@@ -4,3 +4,16 @@ export interface BoardData{
   updated_at: Date;
   color: string;
 }
+
+
+export interface TasksData{
+  task_name:string;
+  task_subtitle:string;
+  task_description:string;
+  task_status:string;
+  assigned_to:string;
+  task_priority:string;
+  due_date: Date;
+  board_id:number;
+  id:number;
+}

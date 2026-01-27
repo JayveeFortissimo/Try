@@ -12,5 +12,10 @@ const controller = new AllController(services);
 route.get("/boards", controller.getBoards);
 route.post("/postBoards", controller.insertBoards);
 
+route.get("/tasks", controller.getTasks);
+route.post("/postTask", controller.insertTask);
+route.put("/editTask/:id", controller.editTask);
+route.delete("/deleteTask/:id", controller.deleteTask);
+
 
 export default route;

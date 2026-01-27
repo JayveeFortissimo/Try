@@ -1,5 +1,5 @@
 import { databaseConnection } from "../config/database";
-import type { BoardData } from "../interface/boards.interface.dto";
+import type { BoardData, TasksData } from "../interface/boards.interface.dto";
 
 class Repositories {
   private readonly db = databaseConnection;
@@ -9,14 +9,50 @@ class Repositories {
     return result.rows;
   }
 
+  async selectAllTasks() {
+    const result = await this.db.query("SELECT * FROM task");
+    return result.rows;
+  }
+
   async insertBoards(boardData: BoardData) {
     const { board_name, board_subtitle, updated_at, color } = boardData;
-    return await this.db.query("INSERT INTO boards (board_name, board_subtitle, update_at, color) VALUES ($1,$2,$3,$4)", [
-      board_name,
-      board_subtitle,
-      updated_at,
-      color
-    ]);
+    return await this.db.query(
+      "INSERT INTO boards (board_name, board_subtitle, update_at, color) VALUES ($1,$2,$3,$4)",
+      [board_name, board_subtitle, updated_at, color],
+    );
+  }
+
+  async insertTasks(taskData: TasksData) {
+    const { task_name, task_description, board_id, task_status, task_priority, due_date, task_subtitle, assigned_to } = taskData;
+
+    return await this.db.query(
+      "INSERT INTO task (task_name, task_subtitle, task_description, task_status, assigned_to, task_priority, due_date, board_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)",
+      [ task_name, task_subtitle, task_description, task_status, assigned_to, task_priority, due_date,board_id],
+    );
+  }
+
+
+  async editTask(taskData: TasksData, taskId:number){
+   
+    const { task_name, task_description, board_id, task_status, task_priority, due_date, task_subtitle, assigned_to } = taskData;
+     return await this.db.query(
+      "UPDATE task SET task_name = $1, task_description = $2, board_id = $3, task_status = $4, assigned_to = $5, task_priority = $6, due_date = $7, task_subtitle = $8 WHERE task_id= $9",
+      [
+        task_name,
+        task_description,
+        board_id,
+        task_status,
+        assigned_to,
+        task_priority,
+        due_date,
+        task_subtitle,
+        taskId
+      ]
+     )
+  }
+
+  async deleteTask(deleteID:number){
+   return await this.db.query("DELETE FROM task WHERE task_id = $1", [deleteID])
   }
 }
 
