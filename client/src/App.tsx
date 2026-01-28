@@ -1,7 +1,8 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Wrapper from "./Wrapper";
-import Dashboard from "./Dashboard";
-import Boards from "./Boards";
+import Wrapper from "@/Wrapper";
+import Dashboard from "@/Dashboard";
+import Boards from "@/Boards";
+import SeeBoards from "@/SeeBoards";
 
 import Createboards from "@/context/Createboards";
 
@@ -18,6 +19,10 @@ function App() {
         {
           path: "boards",
           element: <Boards />,
+        },
+          {
+          path: "boards/:id",
+          element: <SeeBoards />,
         },
       ],
     },
