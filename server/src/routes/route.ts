@@ -17,5 +17,6 @@ route.post("/postTask", controller.insertTask);
 route.put("/editTask/:id", controller.editTask);
 route.delete("/deleteTask/:id", controller.deleteTask);
 
+route.get("/getAllBoards/:id", controller.getByJoin);
 
 export default route;

@@ -21,15 +21,17 @@ export interface GetBoards{
 
 export interface TasksInterface {
   title: string;
+  subtitle:string;
   description: string;
   status: string;
   assignedTo: string;
   priority: string;
-  dueDate: string;
+  dueDate: Date;
 }
 
 export interface InitialStateInterface {
   getBoardsLoading:boolean;
+  getAllbyJoins:boolean;
   sendLoading:boolean;
   createBoards: BoardsInterface;
   createTasks: TasksInterface;
@@ -39,6 +41,7 @@ export interface InitialStateInterface {
 }
 
 export interface ContextAPI {
+  getAllBoardsByJoins: (id:number) => Promise<void>
   getForBoards: (type: string, value: string) => void;
   getForTasks: (type: string, value: string) => void;
   createBoards: BoardsInterface;
@@ -46,10 +49,11 @@ export interface ContextAPI {
   typeCreate: string;
   setTypeCreate: (type: string) => void;
   mainBoard: GetBoards[];
-  task: TasksInterface[];
+  task: any[];
   dispatch: Dispatch<any>;
   sendLoading:boolean;
   getBoardsLoading:boolean;
   submitBoards: (e:React.FormEvent<HTMLFormElement>) => Promise<void>;
+  submitTask: (e:React.FormEvent<HTMLFormElement>, id:string) => Promise<void>;
   getAllBoards: () => Promise<void>;
 }

@@ -16,11 +16,12 @@ const contextProvider = createContext<ContextAPI>({
   },
   createTasks: {
     title: "",
+    subtitle:"",
     description: "",
-    status: "",
+    status: "To Do",
     assignedTo: "",
-    priority: "",
-    dueDate: "",
+    priority: "low",
+    dueDate: new Date(""),
   },
   typeCreate: "",
   setTypeCreate: () => {},
@@ -30,7 +31,9 @@ const contextProvider = createContext<ContextAPI>({
   sendLoading:false,
   getBoardsLoading:true,
   submitBoards: async(_e:React.FormEvent<HTMLFormElement>)=>{},
-  getAllBoards: async()=>{}
+  submitTask: async(_e:React.FormEvent<HTMLFormElement>, id:string)=>{},
+  getAllBoards: async()=>{},
+  getAllBoardsByJoins:async(_id:number) => {}
 });
 
 const reducer = (state: InitialStateInterface , action: { type: string; payload: any}) => {
@@ -40,7 +43,9 @@ const reducer = (state: InitialStateInterface , action: { type: string; payload:
         case "SET_TYPE_CREATE": return {...state, typeCreate:action.payload};
         case "SET_SEND_LOADING": return {...state, sendLoading:action.payload}
         case "SET_GET_BOARDS_LOADING": return {...state, getBoardsLoading:action.payload}
+        case "SET_GET_BYJOINS_LOADING": return {...state, getAllbyJoins:action.payload}
         case "SET_MAIN_BOARD": return {...state, mainBoard:action.payload}
+        case "GET_JOINS_DATA": return {...state, task:[action.payload]}
         default: return state;
      }
 };
@@ -48,6 +53,7 @@ const reducer = (state: InitialStateInterface , action: { type: string; payload:
 const initialState: InitialStateInterface = {
   sendLoading:false,
   getBoardsLoading:true,
+  getAllbyJoins:true,
   createBoards: {
     name: "",
     description: "",
@@ -56,11 +62,12 @@ const initialState: InitialStateInterface = {
   },
   createTasks: {
     title: "",
+    subtitle:"",
     description: "",
-    status: "",
+    status: "To Do",
     assignedTo: "",
-    priority: "",
-    dueDate: "",
+    priority: "low",
+    dueDate: new Date(""),
   },
   typeCreate: "",
   mainBoard:[],
@@ -92,6 +99,23 @@ const Createboards = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
+
+ const getAllBoardsByJoins = async(id:number) => {
+    try{ 
+        dispatch({type:"SET_GET_BYJOINS_LOADING", payload:true})
+        const response = await api.get(`/api/getAllBoards/${id}`);
+        if(response.status !== 200) return console.log("Cannot Fetch");
+        console.log(response.data.data)
+        dispatch({type:"GET_JOINS_DATA", payload:response.data.data});
+    }catch(error){
+      console.log(error)
+      dispatch({type:"SET_GET_BYJOINS_LOADING", payload:false})
+    }finally{
+      dispatch({type:"SET_GET_BYJOINS_LOADING", payload:false})
+    }
+  }
+  
+
    const submitBoards = async(e:React.FormEvent<HTMLFormElement>) => {
        e.preventDefault();
         dispatch({type:"SET_SEND_LOADING", payload:true});
@@ -116,6 +140,32 @@ const Createboards = ({ children }: { children: React.ReactNode }) => {
    }
 
 
+      const submitTask= async(e:React.FormEvent<HTMLFormElement>, id:string) => {
+         e.preventDefault();
+        dispatch({type:"SET_SEND_LOADING", payload:true});
+       try{
+          const insertTasks = await api.post("/api/postTask", {
+           task_name: data.createTasks.title,
+           task_description: data.createTasks.description,
+           task_subtitle: data.createTasks.subtitle,
+           task_status: data.createTasks.status,
+           assigned_to: data.createTasks.assignedTo,
+           task_priority: data.createTasks.priority,
+           due_date: data.createTasks.dueDate,
+            board_id: Number(id) 
+          });
+          if(insertTasks.status === 200) return console.log(insertTasks.data);
+           console.log("OK NA!")
+       }catch(error){
+         dispatch({type:"SET_SEND_LOADING", payload:false});
+         console.log(error)
+       }finally{
+       dispatch({type:"SET_SEND_LOADING", payload:false});
+       // wait for it
+       dispatch({type:"SET_CREATE_TASKS", payload: {...data.createTasks,  title: "", subtitle:"", description: "", status: "To Do", assignedTo: "", priority: "low", dueDate: new Date("")}});
+      }
+   }
+
   const { typeCreate, mainBoard, task, createBoards , createTasks, sendLoading, getBoardsLoading} = data;
 
   return (
@@ -133,7 +183,9 @@ const Createboards = ({ children }: { children: React.ReactNode }) => {
         sendLoading,
         submitBoards,
         getAllBoards,
-        getBoardsLoading
+        getBoardsLoading,
+        submitTask,
+        getAllBoardsByJoins
       }}
     >
       {children}

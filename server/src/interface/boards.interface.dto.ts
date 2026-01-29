@@ -17,3 +17,10 @@ export interface TasksData{
   board_id:number;
   id:number;
 }
+
+
+export interface ProductQuery {
+  page?: string;
+  limit?: string;
+  search?: string;
+}

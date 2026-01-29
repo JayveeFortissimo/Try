@@ -4,14 +4,33 @@ import type { BoardData, TasksData } from "../interface/boards.interface.dto";
 class Repositories {
   private readonly db = databaseConnection;
 
-  async selectAllBoards() {
-    const result = await this.db.query("SELECT * FROM boards");
+  async selectAllBoards(offset?: number, limit?: number) {
+    const result = await this.db.query(
+      "SELECT * FROM boards LIMIT $1 OFFSET $2",
+      [limit, offset],
+    );
     return result.rows;
   }
 
   async selectAllTasks() {
     const result = await this.db.query("SELECT * FROM task");
     return result.rows;
+  }
+
+  async selectByJoin(boardId: number) {
+    const result = await this.db.query(
+      "SELECT b.*, t.task_id, t.task_name, t.task_subtitle, t.task_description, t.task_status, t.assigned_to, t.task_priority, t.due_date, t.created_at FROM boards b LEFT JOIN task t ON b.board_id = t.board_id WHERE b.board_id = $1",
+      [boardId],
+    );
+
+    const checkIDisnull = result.rows.map((pro) => {
+      if (pro.board_id === null) {
+        return { ...pro, board_id: boardId };
+      }
+      return pro;
+    });
+
+    return checkIDisnull;
   }
 
   async insertBoards(boardData: BoardData) {
@@ -23,19 +42,44 @@ class Repositories {
   }
 
   async insertTasks(taskData: TasksData) {
-    const { task_name, task_description, board_id, task_status, task_priority, due_date, task_subtitle, assigned_to } = taskData;
+    const {
+      task_name,
+      task_description,
+      board_id,
+      task_status,
+      task_priority,
+      due_date,
+      task_subtitle,
+      assigned_to,
+    } = taskData;
 
     return await this.db.query(
       "INSERT INTO task (task_name, task_subtitle, task_description, task_status, assigned_to, task_priority, due_date, board_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)",
-      [ task_name, task_subtitle, task_description, task_status, assigned_to, task_priority, due_date,board_id],
+      [
+        task_name,
+        task_subtitle,
+        task_description,
+        task_status,
+        assigned_to,
+        task_priority,
+        due_date,
+        board_id,
+      ],
     );
   }
 
-
-  async editTask(taskData: TasksData, taskId:number){
-   
-    const { task_name, task_description, board_id, task_status, task_priority, due_date, task_subtitle, assigned_to } = taskData;
-     return await this.db.query(
+  async editTask(taskData: TasksData, taskId: number) {
+    const {
+      task_name,
+      task_description,
+      board_id,
+      task_status,
+      task_priority,
+      due_date,
+      task_subtitle,
+      assigned_to,
+    } = taskData;
+    return await this.db.query(
       "UPDATE task SET task_name = $1, task_description = $2, board_id = $3, task_status = $4, assigned_to = $5, task_priority = $6, due_date = $7, task_subtitle = $8 WHERE task_id= $9",
       [
         task_name,
@@ -46,13 +90,15 @@ class Repositories {
         task_priority,
         due_date,
         task_subtitle,
-        taskId
-      ]
-     )
+        taskId,
+      ],
+    );
   }
 
-  async deleteTask(deleteID:number){
-   return await this.db.query("DELETE FROM task WHERE task_id = $1", [deleteID])
+  async deleteTask(deleteID: number) {
+    return await this.db.query("DELETE FROM task WHERE task_id = $1", [
+      deleteID,
+    ]);
   }
 }
 

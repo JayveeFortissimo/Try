@@ -1,18 +1,78 @@
 import { Request, Response } from "express";
 import type { BoardData, TasksData } from "../interface/boards.interface.dto";
-
+import { ProductQuery } from "../interface/boards.interface.dto";
 class AllController {
   constructor(private services: any) {}
 
-  getBoards = async (req: Request, res: Response) => {
-    const allData = await this.services.getAllBoards();
-    res.json({ boardData: allData });
+  getBoards = async (
+    req: Request<any, any, any, ProductQuery>,
+    res: Response,
+  ) => {
+    const { page, limit } = req.query; // can you add den ng search if ever
+
+    const pages = parseInt(page as string, 10) || 1;
+    const limits = parseInt(limit as string, 10) || 10;
+
+    const offset = (pages - 1) * limits;
+
+    const allData = await this.services.getAllBoards(offset, limits);
+    res.json({
+      boardData: allData,
+      pagination: {
+        current_page: pages,
+        itemsPerpage: limits,
+        toatalItems: allData.length,
+      },
+    });
   };
 
   getTasks = async (req: Request, res: Response) => {
     const allData = await this.services.getAllTasks();
     res.json({ taskData: allData });
   };
+
+  getByJoin = async (req: Request, res: Response) => {
+    const boardId = +req.params.id;
+  
+    const allData = await this.services.getByJoin(boardId);
+
+     if (!allData.length) {
+      res.status(404).json({ message: "Board not found" });
+      return 
+      }
+
+    const boardRow = allData[0];
+    const tasks: any = [];
+
+    allData.forEach((element: any) => {
+      if (element.task_id !== null) {
+      tasks.push({
+        task_id: element.task_id,
+        task_name: element.task_name,
+        task_subtitle: element.task_subtitle,
+        task_description: element.task_description,
+        task_status: element.task_status,
+        assigned_to: element.assigned_to,
+        task_priority: element.task_priority,
+        due_date: element.due_date,
+      });
+    }
+    });
+
+    res.json({
+      message: "OK",
+      data: {
+        board_id: boardRow.board_id,
+        board_name: boardRow.board_name,
+        board_subtitle: boardRow.board_subtitle,
+        created_at: boardRow.created_at,
+        update_at: boardRow.update_at,
+        tasks: tasks,
+      },
+    });
+  };
+
+  // Insertion D2 ah XD
 
   insertBoards = async (req: Request<BoardData>, res: Response) => {
     const allBoards: BoardData = req.body;
@@ -25,10 +85,9 @@ class AllController {
     res.json({ message: "Board inserted successfully" });
   };
 
-
   // All Task Here OK? !
 
-  insertTask= async (req: Request<TasksData>, res: Response) => {
+  insertTask = async (req: Request<TasksData>, res: Response) => {
     const allTasks: TasksData = req.body;
     const result = await this.services.insertTasks(allTasks);
 
@@ -39,24 +98,20 @@ class AllController {
     res.json({ message: "Board inserted successfully" });
   };
 
-
-  editTask = async (req:Request<TasksData>, res:Response) => {
+  editTask = async (req: Request<TasksData>, res: Response) => {
     const taskId = +req.params.id;
     const allTasks: TasksData = req.body;
     await this.services.editTask(allTasks, taskId);
 
     res.json({ message: "Task edited successfully" });
-  }
+  };
 
-
-  deleteTask = async (req:Request<TasksData>, res:Response) => {
+  deleteTask = async (req: Request<TasksData>, res: Response) => {
     const deleteID = +req.params.id;
     await this.services.deleteTask(deleteID);
 
     res.json({ message: "Task deleted successfully" });
-  }
-
-
+  };
 }
 
 export default AllController;
