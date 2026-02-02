@@ -24,10 +24,11 @@ const BoardCards = ({
         mainBoard.map((board) => (
           <div
             key={board.board_id}
+            style={{ backgroundColor: board.color }}
             className={`border min-h-[8rem] rounded hover:shadow-md cursor-pointer p-4`}
             onClick={() => redirect(`/boards/${board.board_id}`)}
           >
-            <p className="text-2xl font-bold mb-2">{board.board_name}</p>
+            <p className="text-lg font-bold mb-2">{board.board_name}</p>
             <p className="text-sm text-gray-500">{board.board_subtitle}</p>
           </div>
         ))

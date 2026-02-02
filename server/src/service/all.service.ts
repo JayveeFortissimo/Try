@@ -6,6 +6,10 @@ class AllService {
     return await this.repositories.selectAllBoards(offset, limit);
   }
 
+  async getBoardsCount() {
+  return await this.repositories.countBoards();
+}
+
   async getAllTasks() {
     return await this.repositories.selectAllTasks();
   }

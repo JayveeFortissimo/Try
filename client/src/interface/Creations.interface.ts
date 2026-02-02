@@ -38,6 +38,11 @@ export interface InitialStateInterface {
   typeCreate: string;
   mainBoard: BoardsInterface[];
   task: TasksInterface[];
+  pagination:{
+    current_page:number,
+    itemsPerPage:number,
+    totalPages:number
+  }
 }
 
 export interface ContextAPI {
@@ -53,7 +58,13 @@ export interface ContextAPI {
   dispatch: Dispatch<any>;
   sendLoading:boolean;
   getBoardsLoading:boolean;
+  getAllbyJoins:boolean;
   submitBoards: (e:React.FormEvent<HTMLFormElement>) => Promise<void>;
   submitTask: (e:React.FormEvent<HTMLFormElement>, id:string) => Promise<void>;
   getAllBoards: () => Promise<void>;
+    pagination:{
+    current_page:number,
+    itemsPerPage:number,
+    totalPages:number
+  }
 }

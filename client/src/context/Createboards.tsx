@@ -11,7 +11,7 @@ const contextProvider = createContext<ContextAPI>({
   createBoards: {
     name: "",
     description: "",
-    color: "",
+    color: "#F59E0B",
     subtitle:""
   },
   createTasks: {
@@ -30,10 +30,16 @@ const contextProvider = createContext<ContextAPI>({
   dispatch: () => {},
   sendLoading:false,
   getBoardsLoading:true,
+  getAllbyJoins:true,
   submitBoards: async(_e:React.FormEvent<HTMLFormElement>)=>{},
   submitTask: async(_e:React.FormEvent<HTMLFormElement>, id:string)=>{},
   getAllBoards: async()=>{},
-  getAllBoardsByJoins:async(_id:number) => {}
+  getAllBoardsByJoins:async(_id:number) => {},
+    pagination:{
+    current_page:1,
+    itemsPerPage:0,
+    totalPages:0
+  }
 });
 
 const reducer = (state: InitialStateInterface , action: { type: string; payload: any}) => {
@@ -46,6 +52,7 @@ const reducer = (state: InitialStateInterface , action: { type: string; payload:
         case "SET_GET_BYJOINS_LOADING": return {...state, getAllbyJoins:action.payload}
         case "SET_MAIN_BOARD": return {...state, mainBoard:action.payload}
         case "GET_JOINS_DATA": return {...state, task:[action.payload]}
+        case "GET_PAGINATIONS": return {...state, pagination:action.payload}
         default: return state;
      }
 };
@@ -57,7 +64,7 @@ const initialState: InitialStateInterface = {
   createBoards: {
     name: "",
     description: "",
-    color: "",
+    color: "#F59E0B",
     subtitle:""
   },
   createTasks: {
@@ -71,7 +78,12 @@ const initialState: InitialStateInterface = {
   },
   typeCreate: "",
   mainBoard:[],
-  task:[]
+  task:[],
+  pagination:{
+    current_page:1,
+    itemsPerPage:4,
+    totalPages:0
+  }
 };
 
 const Createboards = ({ children }: { children: React.ReactNode }) => {
@@ -87,10 +99,13 @@ const Createboards = ({ children }: { children: React.ReactNode }) => {
   const getAllBoards = async() => {
     try{ 
       dispatch({type:"SET_GET_BOARDS_LOADING", payload:true});
-      const getBoards = await api.get("/api/boards");
+      const getBoards = await api.get(`/api/boards?page=${data.pagination.current_page}&limit=${data.pagination.itemsPerPage}`);
       if(getBoards.status !== 200) return console.log("Cannot fetch");
+      
       dispatch({type:"SET_MAIN_BOARD", payload:getBoards.data.boardData});
-      console.log("SUCCESS! ")
+      dispatch({type:"GET_PAGINATIONS", payload:getBoards.data.pagination })
+
+      console.log("AllData :", getBoards.data.boardData)
     }catch(error){
       console.log(error)
       dispatch({type:"SET_GET_BOARDS_LOADING", payload:false});
@@ -98,7 +113,6 @@ const Createboards = ({ children }: { children: React.ReactNode }) => {
       dispatch({type:"SET_GET_BOARDS_LOADING", payload:false});
     }
   }
-
 
  const getAllBoardsByJoins = async(id:number) => {
     try{ 
@@ -140,7 +154,7 @@ const Createboards = ({ children }: { children: React.ReactNode }) => {
    }
 
 
-      const submitTask= async(e:React.FormEvent<HTMLFormElement>, id:string) => {
+    const submitTask= async(e:React.FormEvent<HTMLFormElement>, id:string) => {
          e.preventDefault();
         dispatch({type:"SET_SEND_LOADING", payload:true});
        try{
@@ -166,7 +180,7 @@ const Createboards = ({ children }: { children: React.ReactNode }) => {
       }
    }
 
-  const { typeCreate, mainBoard, task, createBoards , createTasks, sendLoading, getBoardsLoading} = data;
+  const { typeCreate, mainBoard, task, createBoards , createTasks, sendLoading, getBoardsLoading, getAllbyJoins, pagination} = data;
 
   return (
     <contextProvider.Provider
@@ -185,7 +199,9 @@ const Createboards = ({ children }: { children: React.ReactNode }) => {
         getAllBoards,
         getBoardsLoading,
         submitTask,
-        getAllBoardsByJoins
+        getAllBoardsByJoins,
+        getAllbyJoins,
+        pagination
       }}
     >
       {children}

@@ -4,8 +4,8 @@ import { useCreating } from "@/context/Createboards";
 import SpinnerCircle2 from "../common/SpinnerLoading";
 
 const BoardsCreation = () => {
-    const  {submitBoards, sendLoading, getForBoards, createBoards} = useCreating();
-    console.log(createBoards)
+    const  {submitBoards, sendLoading, getForBoards} = useCreating();
+    
   return (
     <form onSubmit={submitBoards} className="flex flex-col gap-3">
       <div>
@@ -26,9 +26,11 @@ const BoardsCreation = () => {
       <div>
         <p className="mb-1 font-bold text-sm">Colors</p>
         <select onChange={e => getForBoards("color", e.target.value)} disabled={sendLoading} className="w-full border p-3 rounded cursor-pointer">
-          <option value="Red">Red</option>
-          <option value="Blue">Blue</option>
-          <option value="Green">Green</option>
+          <option value="#F59E0B">Amber</option>
+          <option value="#FBBF24">Golden</option>
+          <option value="#FEF3C7">Soft Yellow</option>
+          <option value="#92400E">Deep Brown</option>
+          <option value="#FFFBEB">Warm White</option>
         </select>
       </div>
       <Button 

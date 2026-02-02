@@ -11,17 +11,20 @@ class AllController {
     const { page, limit } = req.query; // can you add den ng search if ever
 
     const pages = parseInt(page as string, 10) || 1;
-    const limits = parseInt(limit as string, 10) || 10;
+    const limits = parseInt(limit as string, 10) || 4;
 
     const offset = (pages - 1) * limits;
 
     const allData = await this.services.getAllBoards(offset, limits);
+    const totalItems = await this.services.getBoardsCount();
+    const totalPages = Math.ceil(totalItems / limits);
+
     res.json({
       boardData: allData,
       pagination: {
         current_page: pages,
         itemsPerpage: limits,
-        toatalItems: allData.length,
+        totalPages: totalPages,
       },
     });
   };
@@ -67,6 +70,7 @@ class AllController {
         board_subtitle: boardRow.board_subtitle,
         created_at: boardRow.created_at,
         update_at: boardRow.update_at,
+        color:boardRow.color,
         tasks: tasks,
       },
     });

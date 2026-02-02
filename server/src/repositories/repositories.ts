@@ -12,6 +12,13 @@ class Repositories {
     return result.rows;
   }
 
+  async countBoards() {
+  const result = await this.db.query(
+    "SELECT COUNT(*) FROM boards"
+  );
+  return parseInt(result.rows[0].count, 10);
+}
+
   async selectAllTasks() {
     const result = await this.db.query("SELECT * FROM task");
     return result.rows;
@@ -22,7 +29,7 @@ class Repositories {
       "SELECT b.*, t.task_id, t.task_name, t.task_subtitle, t.task_description, t.task_status, t.assigned_to, t.task_priority, t.due_date, t.created_at FROM boards b LEFT JOIN task t ON b.board_id = t.board_id WHERE b.board_id = $1",
       [boardId],
     );
-
+     
     const checkIDisnull = result.rows.map((pro) => {
       if (pro.board_id === null) {
         return { ...pro, board_id: boardId };
