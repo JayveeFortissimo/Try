@@ -5,6 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { useCreating } from "@/context/Createboards";
 import { useState, useEffect } from "react";
 import Sheets from "@/components/common/Sheets";
+import SkeletoneDynamic from "./components/common/SkeletoneCards";
+import TaskCards from "./components/cards/TaskCards";
+import SpinnerCircle2 from "./components/common/SpinnerLoading";
+import { DateConverter } from "./lib/dateConverter";
 
 const SeeBoards = () => {
   const { id } = useParams();
@@ -29,36 +33,37 @@ const SeeBoards = () => {
         </Button>
       </header>
 
-      <main
-        style={{ backgroundColor: find?.color }}
-        className="mb-5 min-h-[11rem] rounded p-5 flex flex-col justify-between"
-      >
-        <div>
-          <p className="text-2xl font-bold">{find?.board_name}</p>
-          <p>{find?.board_subtitle}</p>
-        </div>
+      {find?.length <= 0 || !find ? (
+        <SkeletoneDynamic
+          className="mb-5 min-h-[11rem] rounded p-5 flex flex-col justify-between"
+          haveGrid={false}
+        />
+      ) : (
+        <main
+          style={{ backgroundColor: find?.color }}
+          className="mb-5 min-h-[11rem] rounded p-5 flex flex-col justify-between"
+        >
+          <div>
+            <p className="text-2xl font-bold">{find?.board_name}</p>
+            <p>{find?.board_subtitle}</p>
+          </div>
 
-        <div>
-          <p className="text-[0.7rem]">
-           Created: {new Date(find?.created_at).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
-          <p className="text-[0.7rem]">
-            Update: {new Date(find?.update_at).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
-        </div>
-      </main>
+          <div>
+            <p className="text-[0.7rem]">
+              Created: {DateConverter(find?.board_created_at)}
+            </p>
+            <p className="text-[0.7rem]">
+              Update: {DateConverter(find?.board_update_at)}
+            </p>
+          </div>
+        </main>
+      )}
 
       <section>
         <div className="border min-h-[3rem] flex justify-between items-center p-4 rounded">
-          <p className="text-2xl font-bold">Task ({find?.tasks.length})</p>
+          <div className="text-2xl font-bold w-full">
+            Task <span>{!find ? <SpinnerCircle2 /> : find?.tasks.length}</span>
+          </div>
           <Button
             onClick={() => {
               dispatch({ type: "SET_TYPE_CREATE", payload: "tasks" });
@@ -73,39 +78,23 @@ const SeeBoards = () => {
       <footer className={`grid grid-cols-1 gap-5 mt-10`}>
         {find?.tasks.map((pro: any) => (
           <div
-            key={pro.board_id}
+            key={pro?.board_id}
             className="border min-h-[8rem] rounded hover:shadow-md cursor-pointer p-4"
+              onClick={() => {
+              dispatch({ type: "SET_TYPE_CREATE", payload: "tasks_edit" });
+              setOpen((pro) => !pro);
+            }}
           >
-            <header className="flex flex-col gap-2 mb-3">
-              <p className="text-lg font-bold">{pro?.task_name}</p>
-              <p className="text-sm text-gray-500">{pro?.task_subtitle}</p>
-            </header>
-
-            <section className="grid grid-cols-2 md:grid-cols-4">
-              <div>
-                <p className="text-sm font-semibold">Assigned to:</p>
-                <p className="text-[0.7rem] font-semibold text-gray-500">
-                  {pro?.assigned_to}
-                </p>
-              </div>
-
-              <div>
-                <p className="text-sm font-semibold">Due date:</p>
-                <p className="text-[0.7rem] font-semibold text-gray-500">
-                  {pro?.due_date}
-                </p>
-              </div>
-
-              <div>
-                <p className="text-sm font-semibold">Created:</p>
-                <p></p>
-              </div>
-
-              <div>
-                <p className="text-sm font-semibold">Upadated:</p>
-                <p></p>
-              </div>
-            </section>
+            <TaskCards
+              taskName={pro?.task_name}
+              taslSubtitle={pro?.task_subtitle}
+              assigned={pro?.assigned_to}
+              dueDate={pro?.due_date}
+              task_created={pro?.task_created_at}
+              status={pro?.task_status}
+              priority={pro?.task_priority}
+              update_at={pro?.task_update_at}
+            />
           </div>
         ))}
       </footer>

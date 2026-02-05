@@ -16,6 +16,7 @@ const Sheets = ({
   open: boolean;
 }) => {
   const { typeCreate } = useCreating();
+  console.log(typeCreate)
   return (
     <div className="block lg:hidden">
       <div className="flex items-center">

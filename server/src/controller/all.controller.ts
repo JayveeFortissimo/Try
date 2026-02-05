@@ -58,6 +58,8 @@ class AllController {
         assigned_to: element.assigned_to,
         task_priority: element.task_priority,
         due_date: element.due_date,
+        task_created_at:element.task_created_at,
+        task_update_at:element.task_update_at
       });
     }
     });
@@ -68,8 +70,8 @@ class AllController {
         board_id: boardRow.board_id,
         board_name: boardRow.board_name,
         board_subtitle: boardRow.board_subtitle,
-        created_at: boardRow.created_at,
-        update_at: boardRow.update_at,
+        board_created_at: boardRow.board_created_at,
+        board_update_at: boardRow.board_update_at,
         color:boardRow.color,
         tasks: tasks,
       },

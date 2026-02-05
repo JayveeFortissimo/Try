@@ -18,7 +18,7 @@ const contextProvider = createContext<ContextAPI>({
     title: "",
     subtitle:"",
     description: "",
-    status: "To Do",
+    status: "ToDo",
     assignedTo: "",
     priority: "low",
     dueDate: new Date(""),
@@ -32,7 +32,7 @@ const contextProvider = createContext<ContextAPI>({
   getBoardsLoading:true,
   getAllbyJoins:true,
   submitBoards: async(_e:React.FormEvent<HTMLFormElement>)=>{},
-  submitTask: async(_e:React.FormEvent<HTMLFormElement>, id:string)=>{},
+  submitTask: async(_e:React.MouseEvent<HTMLButtonElement>, _id:string)=>{},
   getAllBoards: async()=>{},
   getAllBoardsByJoins:async(_id:number) => {},
     pagination:{
@@ -71,7 +71,7 @@ const initialState: InitialStateInterface = {
     title: "",
     subtitle:"",
     description: "",
-    status: "To Do",
+    status: "ToDo",
     assignedTo: "",
     priority: "low",
     dueDate: new Date(""),
@@ -154,7 +154,7 @@ const Createboards = ({ children }: { children: React.ReactNode }) => {
    }
 
 
-    const submitTask= async(e:React.FormEvent<HTMLFormElement>, id:string) => {
+    const submitTask= async(e:React.MouseEvent<HTMLButtonElement>, id:string) => {
          e.preventDefault();
         dispatch({type:"SET_SEND_LOADING", payload:true});
        try{

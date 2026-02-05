@@ -1,26 +1,17 @@
-import SpinnerCircle2 from "@/components/common/SpinnerLoading";
 import type { GetBoards } from "@/interface/Creations.interface";
 import { useNavigate } from "react-router-dom";
 
 const BoardCards = ({
     mainBoard,
-    getBoardsLoading,
     classname
 }: {
   mainBoard: GetBoards[];
-  getBoardsLoading: boolean;
   classname?: string;
 }) => {
   const redirect = useNavigate();
   return (
     <section className={classname}>
-      {getBoardsLoading ? (
-        <div className="w-full min-h-[40rem] grid place-items-center">
-          <SpinnerCircle2 />{" "}
-        </div>
-      ) : mainBoard.length <= 0 ? (
-        <p className="text-center">No Boards Yet</p>
-      ) : (
+      {
         mainBoard.map((board) => (
           <div
             key={board.board_id}
@@ -32,7 +23,7 @@ const BoardCards = ({
             <p className="text-sm text-gray-500">{board.board_subtitle}</p>
           </div>
         ))
-      )}
+      }
     </section>
   );
 };

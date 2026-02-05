@@ -60,7 +60,7 @@ export interface ContextAPI {
   getBoardsLoading:boolean;
   getAllbyJoins:boolean;
   submitBoards: (e:React.FormEvent<HTMLFormElement>) => Promise<void>;
-  submitTask: (e:React.FormEvent<HTMLFormElement>, id:string) => Promise<void>;
+  submitTask: (e:React.MouseEvent<HTMLButtonElement>, id:string) => Promise<void>;
   getAllBoards: () => Promise<void>;
     pagination:{
     current_page:number,

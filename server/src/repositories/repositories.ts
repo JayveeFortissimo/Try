@@ -26,7 +26,7 @@ class Repositories {
 
   async selectByJoin(boardId: number) {
     const result = await this.db.query(
-      "SELECT b.*, t.task_id, t.task_name, t.task_subtitle, t.task_description, t.task_status, t.assigned_to, t.task_priority, t.due_date, t.created_at FROM boards b LEFT JOIN task t ON b.board_id = t.board_id WHERE b.board_id = $1",
+      "SELECT  b.board_id,b.board_name,b.board_subtitle,b.created_at AS board_created_at, b.update_at AS board_update_at, b.color, t.task_id, t.task_name, t.task_subtitle, t.task_description, t.task_status, t.assigned_to, t.task_priority, t.due_date, t.created_at AS task_created_at, t.update_at AS task_update_at FROM boards b LEFT JOIN task t ON b.board_id = t.board_id WHERE b.board_id = $1",
       [boardId],
     );
      

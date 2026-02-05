@@ -17,7 +17,7 @@ export default function Paginations({
   onPageChange: (current_page: number) => void;
 }) {
   return (
-    <div className="w-full max-w-xs mt-10">
+    <div className="w-full max-w-xs mt-5">
       <Pagination className="w-full">
         <PaginationContent className="w-full justify-between">
           <PaginationItem
