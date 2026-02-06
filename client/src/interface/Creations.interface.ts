@@ -45,33 +45,28 @@ export interface InitialStateInterface {
 }
 
 export interface ContextAPI {
-  getAllBoardsByJoins: (id: number) => Promise<void>;
+  task: any[];
+  mainBoard: GetBoards[];
+  task_id: number;
+  typeCreate: string;
+  sendLoading: boolean;
+  getAllbyJoins: boolean;
+  getBoardsLoading: boolean;
+  createTasks: TasksInterface;
+  createBoards: BoardsInterface;
+  dispatch: Dispatch<any>;
+  getAllBoards: () => Promise<void>;
+  setTypeCreate: (type: string) => void;
   getForBoards: (type: string, value: string) => void;
   getForTasks: (type: string, value: string) => void;
-  createBoards: BoardsInterface;
-  createTasks: TasksInterface;
-  typeCreate: string;
-  setTypeCreate: (type: string) => void;
-  mainBoard: GetBoards[];
-  task: any[];
-  dispatch: Dispatch<any>;
-  sendLoading: boolean;
-  getBoardsLoading: boolean;
-  getAllbyJoins: boolean;
+  getAllBoardsByJoins: (id: number) => Promise<void>;
   submitBoards: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
-  submitTask: (
-    e: React.MouseEvent<HTMLButtonElement>,
-    id: string,
-  ) => Promise<void>;
-  getAllBoards: () => Promise<void>;
-  pagination: {
+  submitTask: (e: React.MouseEvent<HTMLButtonElement>, id: string) => Promise<void>;
+  editTAsk:(e: React.MouseEvent<HTMLButtonElement>,task_Id: number) => Promise<void>;
+  deletetask:(e: React.MouseEvent<HTMLButtonElement>,task_Id: number) => Promise<void>;
+    pagination: {
     current_page: number;
     itemsPerPage: number;
     totalPages: number;
   };
-  editTAsk: (
-    e: React.MouseEvent<HTMLButtonElement>,
-    task_Id: number,
-  ) => Promise<void>;
-  task_id: number;
 }

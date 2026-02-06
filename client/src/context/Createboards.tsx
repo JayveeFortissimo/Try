@@ -41,6 +41,7 @@ const contextProvider = createContext<ContextAPI>({
     totalPages:0
   },
   editTAsk: async(_e:React.MouseEvent<HTMLButtonElement>, _taskId:number)=>{},
+  deletetask:async(_e:React.MouseEvent<HTMLButtonElement>, _taskId:number)=>{},
  task_id:0
 });
 
@@ -201,39 +202,54 @@ const Createboards = ({ children }: { children: React.ReactNode }) => {
    }
 
    const deletetask = async(e:React.MouseEvent<HTMLButtonElement>, taskId:number) => {
+       e.preventDefault();
        try{
-        
-       }catch(_error){}
+       const deleteResponse =  await api.delete(`api/deleteTask/${taskId}`);
+       if(deleteResponse.status !== 200) return console.log("Connot Delete!")
+       }catch(_error){
+        console.log(_error)
+       }
        finally{
         console.log("Wait po")
        }
    }
    
-
-  const {task_id, typeCreate, mainBoard, task, createBoards , createTasks, sendLoading, getBoardsLoading, getAllbyJoins, pagination} = data;
+  const { 
+         task,
+         task_id, 
+         mainBoard,
+         pagination,
+         typeCreate, 
+         createTasks,
+         sendLoading,
+         createBoards, 
+         getAllbyJoins,
+         getBoardsLoading,
+        } = data;
 
   return (
     <contextProvider.Provider
       value={{
-        getForBoards,
-        getForTasks,
-        createBoards,
-        createTasks,
-        typeCreate,
-        setTypeCreate,
-        mainBoard,
         task,
+        task_id,
         dispatch,
+        editTAsk,
+        mainBoard,
+        deletetask,
+        submitTask,
+        pagination,
+        typeCreate,
+        getForTasks,
         sendLoading,
+        createTasks,
+        createBoards,
+        getForBoards,
         submitBoards,
         getAllBoards,
-        getBoardsLoading,
-        submitTask,
-        getAllBoardsByJoins,
+        setTypeCreate,
         getAllbyJoins,
-        pagination,
-        editTAsk,
-        task_id
+        getBoardsLoading,
+        getAllBoardsByJoins,
       }}
     >
       {children}

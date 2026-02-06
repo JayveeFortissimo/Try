@@ -7,13 +7,14 @@ import { useParams } from "react-router-dom";
 const TasksCreation = () => {
   const { id } = useParams();
   const {
-    sendLoading,
-    getForTasks,
-    submitTask,
-    createTasks,
-    typeCreate,
+    task_id,
     editTAsk,
-    task_id
+    typeCreate,
+    deletetask,
+    submitTask,
+    getForTasks,
+    createTasks,
+    sendLoading,
   } = useCreating();
   
   return (
@@ -106,7 +107,9 @@ const TasksCreation = () => {
             >
               Edit
             </Button>
-            <Button variant={"destructive"} className="flex-1 cursor-pointer">
+            <Button 
+            onClick={(e)=> deletetask(e,Number(task_id))}
+            variant={"destructive"} className="flex-1 cursor-pointer">
               Delete
             </Button>
           </div>
