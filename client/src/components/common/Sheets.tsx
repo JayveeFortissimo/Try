@@ -7,7 +7,7 @@ import {
 import BoardsCreation from "@/components/section/BoardsCreation";
 import { useCreating } from "@/context/Createboards";
 import TasksCreation from "@/components/section/TasksCreation";
-
+import { useEffect } from "react";
 const Sheets = ({
   setOpen,
   open,
@@ -15,8 +15,17 @@ const Sheets = ({
   setOpen: (open: boolean) => void;
   open: boolean;
 }) => {
-  const { typeCreate } = useCreating();
-  console.log(typeCreate)
+  const { typeCreate, dispatch } = useCreating();
+ 
+  useEffect(()=>{
+    if(!open){
+      if(typeCreate === "tasks" || typeCreate === "boards" || typeCreate === "tasks_edit"){
+          dispatch({type:"SET_CREATE_TASKS", payload:""});
+          dispatch({type:"SET_CREATE_BOARDS", payload:""});
+      }
+    } 
+  },[open])
+
   return (
     <div className="block lg:hidden">
       <div className="flex items-center">

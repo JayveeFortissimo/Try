@@ -61,7 +61,7 @@ const SeeBoards = () => {
 
       <section>
         <div className="border min-h-[3rem] flex justify-between items-center p-4 rounded">
-          <div className="text-2xl font-bold w-full">
+          <div className="text-2xl font-bold w-full flex items-center gap-2">
             Task <span>{!find ? <SpinnerCircle2 /> : find?.tasks.length}</span>
           </div>
           <Button
@@ -80,9 +80,22 @@ const SeeBoards = () => {
           <div
             key={pro?.board_id}
             className="border min-h-[8rem] rounded hover:shadow-md cursor-pointer p-4"
-              onClick={() => {
+            onClick={() => {
               dispatch({ type: "SET_TYPE_CREATE", payload: "tasks_edit" });
               setOpen((pro) => !pro);
+              dispatch({
+                type: "SET_CREATE_TASKS",
+                payload: {
+                  title: pro?.task_name,
+                  subtitle: pro?.task_subtitle,
+                  description: pro?.task_description,
+                  status: pro?.task_status,
+                  assignedTo: pro?.assigned_to,
+                  priority: pro?.task_priority,
+                  dueDate: new Date(pro?.due_date).toISOString().split("T")[0],
+                },
+              });
+              dispatch({type:"SET_TASK_ID",payload:pro?.task_id})
             }}
           >
             <TaskCards

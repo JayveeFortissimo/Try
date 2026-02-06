@@ -79,7 +79,7 @@ class Repositories {
     const {
       task_name,
       task_description,
-      board_id,
+
       task_status,
       task_priority,
       due_date,
@@ -87,11 +87,10 @@ class Repositories {
       assigned_to,
     } = taskData;
     return await this.db.query(
-      "UPDATE task SET task_name = $1, task_description = $2, board_id = $3, task_status = $4, assigned_to = $5, task_priority = $6, due_date = $7, task_subtitle = $8 WHERE task_id= $9",
+      "UPDATE task SET task_name = $1, task_description = $2, task_status = $3, assigned_to = $4, task_priority = $5, due_date = $6, task_subtitle = $7 WHERE task_id= $8",
       [
         task_name,
         task_description,
-        board_id,
         task_status,
         assigned_to,
         task_priority,

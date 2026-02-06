@@ -11,7 +11,7 @@ const contextProvider = createContext<ContextAPI>({
   createBoards: {
     name: "",
     description: "",
-    color: "#F59E0B",
+    color: "#EADFCF",
     subtitle:""
   },
   createTasks: {
@@ -21,7 +21,7 @@ const contextProvider = createContext<ContextAPI>({
     status: "ToDo",
     assignedTo: "",
     priority: "low",
-    dueDate: new Date(""),
+    dueDate: "",
   },
   typeCreate: "",
   setTypeCreate: () => {},
@@ -39,7 +39,9 @@ const contextProvider = createContext<ContextAPI>({
     current_page:1,
     itemsPerPage:0,
     totalPages:0
-  }
+  },
+  editTAsk: async(_e:React.MouseEvent<HTMLButtonElement>, _taskId:number)=>{},
+ task_id:0
 });
 
 const reducer = (state: InitialStateInterface , action: { type: string; payload: any}) => {
@@ -53,6 +55,7 @@ const reducer = (state: InitialStateInterface , action: { type: string; payload:
         case "SET_MAIN_BOARD": return {...state, mainBoard:action.payload}
         case "GET_JOINS_DATA": return {...state, task:[action.payload]}
         case "GET_PAGINATIONS": return {...state, pagination:action.payload}
+        case "SET_TASK_ID": return {...state, task_id:action.payload}
         default: return state;
      }
 };
@@ -64,7 +67,7 @@ const initialState: InitialStateInterface = {
   createBoards: {
     name: "",
     description: "",
-    color: "#F59E0B",
+    color: "#EADFCF",
     subtitle:""
   },
   createTasks: {
@@ -74,7 +77,7 @@ const initialState: InitialStateInterface = {
     status: "ToDo",
     assignedTo: "",
     priority: "low",
-    dueDate: new Date(""),
+    dueDate: "",
   },
   typeCreate: "",
   mainBoard:[],
@@ -83,7 +86,8 @@ const initialState: InitialStateInterface = {
     current_page:1,
     itemsPerPage:4,
     totalPages:0
-  }
+  },
+  task_id:0
 };
 
 const Createboards = ({ children }: { children: React.ReactNode }) => {
@@ -95,7 +99,6 @@ const Createboards = ({ children }: { children: React.ReactNode }) => {
 
   const setTypeCreate = (type: string) => dispatch({type: "SET_TYPE_CREATE", payload: type});
 
-
   const getAllBoards = async() => {
     try{ 
       dispatch({type:"SET_GET_BOARDS_LOADING", payload:true});
@@ -103,9 +106,8 @@ const Createboards = ({ children }: { children: React.ReactNode }) => {
       if(getBoards.status !== 200) return console.log("Cannot fetch");
       
       dispatch({type:"SET_MAIN_BOARD", payload:getBoards.data.boardData});
-      dispatch({type:"GET_PAGINATIONS", payload:getBoards.data.pagination })
+      dispatch({type:"GET_PAGINATIONS", payload:getBoards.data.pagination });
 
-      console.log("AllData :", getBoards.data.boardData)
     }catch(error){
       console.log(error)
       dispatch({type:"SET_GET_BOARDS_LOADING", payload:false});
@@ -114,7 +116,7 @@ const Createboards = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
- const getAllBoardsByJoins = async(id:number) => {
+  const getAllBoardsByJoins = async(id:number) => {
     try{ 
         dispatch({type:"SET_GET_BYJOINS_LOADING", payload:true})
         const response = await api.get(`/api/getAllBoards/${id}`);
@@ -129,7 +131,6 @@ const Createboards = ({ children }: { children: React.ReactNode }) => {
     }
   }
   
-
    const submitBoards = async(e:React.FormEvent<HTMLFormElement>) => {
        e.preventDefault();
         dispatch({type:"SET_SEND_LOADING", payload:true});
@@ -148,11 +149,9 @@ const Createboards = ({ children }: { children: React.ReactNode }) => {
          console.log(error)
        }finally{
        dispatch({type:"SET_SEND_LOADING", payload:false});
-       // wait for it
        dispatch({type:"SET_CREATE_BOARDS", payload: {...data.createBoards, name:"", description:"", subtitle:"", color:""}});
        }
    }
-
 
     const submitTask= async(e:React.MouseEvent<HTMLButtonElement>, id:string) => {
          e.preventDefault();
@@ -180,7 +179,38 @@ const Createboards = ({ children }: { children: React.ReactNode }) => {
       }
    }
 
-  const { typeCreate, mainBoard, task, createBoards , createTasks, sendLoading, getBoardsLoading, getAllbyJoins, pagination} = data;
+   const editTAsk = async(e:React.MouseEvent<HTMLButtonElement>, taskId:number) => {
+          e.preventDefault();
+          try{
+          const response =  await api.put(`api/editTask/${taskId}`, {
+           task_name: data.createTasks.title,
+           task_description: data.createTasks.description,
+           task_subtitle: data.createTasks.subtitle,
+           task_status: data.createTasks.status,
+           assigned_to: data.createTasks.assignedTo,
+           task_priority: data.createTasks.priority,
+           due_date: data.createTasks.dueDate,
+           });
+
+          if(response.status !== 200) return console.log("Cannot Edit")
+             console.log("Congrats!!!!")
+          }catch(_error){}
+          finally{
+            console.log("Uggghhhhh! ")
+          }
+   }
+
+   const deletetask = async(e:React.MouseEvent<HTMLButtonElement>, taskId:number) => {
+       try{
+        
+       }catch(_error){}
+       finally{
+        console.log("Wait po")
+       }
+   }
+   
+
+  const {task_id, typeCreate, mainBoard, task, createBoards , createTasks, sendLoading, getBoardsLoading, getAllbyJoins, pagination} = data;
 
   return (
     <contextProvider.Provider
@@ -201,7 +231,9 @@ const Createboards = ({ children }: { children: React.ReactNode }) => {
         submitTask,
         getAllBoardsByJoins,
         getAllbyJoins,
-        pagination
+        pagination,
+        editTAsk,
+        task_id
       }}
     >
       {children}

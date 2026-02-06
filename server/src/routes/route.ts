@@ -1,22 +1,27 @@
 import express from "express";
 import Repositories from "../repositories/repositories";
-import AllController from "../controller/all.controller";
-import AllService from "../service/all.service";
+import BoardController from "../controller/board.controller";
+import BoardService from "../service/board.service";
+import TaskService from "../service/task.service";
+import TaskController from "../controller/task.controller";
 
 const route = express.Router();
 
 const repositories = new Repositories();
-const services = new AllService(repositories);
-const controller = new AllController(services);
+const Boardservices = new BoardService(repositories);
+const Boardcontroller = new BoardController(Boardservices);
 
-route.get("/boards", controller.getBoards);
-route.post("/postBoards", controller.insertBoards);
+const Taskservice = new TaskService(repositories);
+const Taskcontroller = new TaskController(Taskservice)
 
-route.get("/tasks", controller.getTasks);
-route.post("/postTask", controller.insertTask);
-route.put("/editTask/:id", controller.editTask);
-route.delete("/deleteTask/:id", controller.deleteTask);
+route.get("/boards", Boardcontroller.getBoards);
+route.post("/postBoards", Boardcontroller.insertBoards);
 
-route.get("/getAllBoards/:id", controller.getByJoin);
+route.get("/tasks", Taskcontroller.getTasks);
+route.post("/postTask", Taskcontroller.insertTask);
+route.put("/editTask/:id", Taskcontroller.editTask);
+route.delete("/deleteTask/:id", Taskcontroller.deleteTask);
+
+route.get("/getAllBoards/:id", Boardcontroller.getByJoin);
 
 export default route;

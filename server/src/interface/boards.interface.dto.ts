@@ -14,7 +14,7 @@ export interface TasksData{
   assigned_to:string;
   task_priority:string;
   due_date: Date;
-  board_id:number;
+  board_id?:number;
   id:number;
 }
 
