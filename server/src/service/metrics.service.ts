@@ -1,7 +1,9 @@
+class MetricsService {
+  constructor(readonly repositories: any) {}
 
-
-class MetricsService{
-    constructor(){}
+  async allMetricks() {
+    return this.repositories.allMetrics();
+  }
 }
 
 export default MetricsService;

@@ -13,11 +13,9 @@ class Repositories {
   }
 
   async countBoards() {
-  const result = await this.db.query(
-    "SELECT COUNT(*) FROM boards"
-  );
-  return parseInt(result.rows[0].count, 10);
-}
+    const result = await this.db.query("SELECT COUNT(*) FROM boards");
+    return parseInt(result.rows[0].count, 10);
+  }
 
   async selectAllTasks() {
     const result = await this.db.query("SELECT * FROM task");
@@ -29,7 +27,7 @@ class Repositories {
       "SELECT  b.board_id,b.board_name,b.board_subtitle,b.created_at AS board_created_at, b.update_at AS board_update_at, b.color, t.task_id, t.task_name, t.task_subtitle, t.task_description, t.task_status, t.assigned_to, t.task_priority, t.due_date, t.created_at AS task_created_at, t.update_at AS task_update_at FROM boards b LEFT JOIN task t ON b.board_id = t.board_id WHERE b.board_id = $1",
       [boardId],
     );
-     
+
     const checkIDisnull = result.rows.map((pro) => {
       if (pro.board_id === null) {
         return { ...pro, board_id: boardId };
@@ -105,6 +103,13 @@ class Repositories {
     return await this.db.query("DELETE FROM task WHERE task_id = $1", [
       deleteID,
     ]);
+  }
+
+  async allMetrics() {
+    const allMetrics = await this.db.query(
+      "SELECT COUNT(*) AS total_tasks, SUM(CASE WHEN task_status = 'ToDo' THEN 1 ELSE 0 END) AS todo,  SUM(CASE WHEN task_status = 'Inprogress' THEN 1 ELSE 0 END) AS inprogress,  SUM(CASE WHEN task_status = 'Done' THEN 1 ELSE 0 END) AS done FROM task",
+    );
+    return allMetrics.rows;
   }
 }
 

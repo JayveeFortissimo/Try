@@ -5,43 +5,50 @@ import BoardCards from "@/components/cards/BoardCards";
 import { useCreating } from "@/context/Createboards";
 import Paginations from "@/components/common/Pagination";
 import SkeletoneDynamic from "./components/common/SkeletoneCards";
+import SpinnerCircle2 from "./components/common/SpinnerLoading";
+import ProgressAnimationDemo from "./components/common/ProgressBar";
 
 const Dashboard = () => {
-  const { getBoardsLoading, mainBoard, getAllBoards, pagination, dispatch } =
-    useCreating();
+  const { getBoardsLoading, mainBoard, getAllBoards, pagination, dispatch, getAllMetricks, metricks } = useCreating();
 
   useEffect(() => {
     getAllBoards();
   }, [pagination.current_page]);
 
+  useEffect(()=>{
+   getAllMetricks();
+  },[]);
+
+  const complationRate = ((Number(metricks[0]?.done)/Number(metricks[0]?.total_tasks)) * 100);
+
   const allMetrics: { name: string; countData: number; emoji: string }[] = [
     {
       name: "Total Tasks",
-      countData: 3,
+      countData: metricks[0]?.total_tasks,
       emoji: "📊",
     },
     {
       name: "To Do",
-      countData: 4,
+      countData: metricks[0]?.todo,
       emoji: "⭕",
     },
     {
       name: "In Progress",
-      countData: 2,
+      countData: metricks[0]?.inprogress,
       emoji: "⏳",
     },
     {
       name: "Completed",
-      countData: 5,
+      countData: metricks[0]?.done,
       emoji: "✅",
     },
     {
       name: "Completion Rate",
-      countData: 6,
+      countData: complationRate? complationRate as number : 0,
       emoji: "📈",
     },
   ];
-
+  console.log(complationRate)
   return (
     <div className="min-h-[50rem] container mx-auto p-4">
       <header className="flex justify-between items-center mb-15">
@@ -67,7 +74,10 @@ const Dashboard = () => {
                 <p className="text-md text-gray-500 font-medium">
                   {metrics.name}
                 </p>
-                <p className="text-3xl font-bold">{metrics.countData}</p>
+                <div className="text-3xl font-bold">
+                  {metrics.countData ? metrics.name === "Completion Rate"? "": metrics.countData  : <SpinnerCircle2/>}
+                  {metrics.name === "Completion Rate" && <ProgressAnimationDemo  Completion={metrics.countData}/>}
+                </div>
               </div>
               <div>
                 <p className="text-4xl">{metrics.emoji}</p>

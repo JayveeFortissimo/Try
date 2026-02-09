@@ -42,10 +42,12 @@ export interface InitialStateInterface {
     totalPages: number;
   };
   task_id:number;
+  metricks:any[];
 }
 
 export interface ContextAPI {
   task: any[];
+  metricks:any[];
   mainBoard: GetBoards[];
   task_id: number;
   typeCreate: string;
@@ -56,6 +58,7 @@ export interface ContextAPI {
   createBoards: BoardsInterface;
   dispatch: Dispatch<any>;
   getAllBoards: () => Promise<void>;
+  getAllMetricks: () => Promise<void>;
   setTypeCreate: (type: string) => void;
   getForBoards: (type: string, value: string) => void;
   getForTasks: (type: string, value: string) => void;

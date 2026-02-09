@@ -34,6 +34,7 @@ const contextProvider = createContext<ContextAPI>({
   submitBoards: async(_e:React.FormEvent<HTMLFormElement>)=>{},
   submitTask: async(_e:React.MouseEvent<HTMLButtonElement>, _id:string)=>{},
   getAllBoards: async()=>{},
+  getAllMetricks:async()=>{},
   getAllBoardsByJoins:async(_id:number) => {},
     pagination:{
     current_page:1,
@@ -42,7 +43,8 @@ const contextProvider = createContext<ContextAPI>({
   },
   editTAsk: async(_e:React.MouseEvent<HTMLButtonElement>, _taskId:number)=>{},
   deletetask:async(_e:React.MouseEvent<HTMLButtonElement>, _taskId:number)=>{},
- task_id:0
+ task_id:0,
+ metricks:[]
 });
 
 const reducer = (state: InitialStateInterface , action: { type: string; payload: any}) => {
@@ -50,13 +52,14 @@ const reducer = (state: InitialStateInterface , action: { type: string; payload:
         case "SET_CREATE_BOARDS": return {...state, createBoards:action.payload};
         case "SET_CREATE_TASKS": return {...state, createTasks:action.payload};
         case "SET_TYPE_CREATE": return {...state, typeCreate:action.payload};
-        case "SET_SEND_LOADING": return {...state, sendLoading:action.payload}
-        case "SET_GET_BOARDS_LOADING": return {...state, getBoardsLoading:action.payload}
-        case "SET_GET_BYJOINS_LOADING": return {...state, getAllbyJoins:action.payload}
-        case "SET_MAIN_BOARD": return {...state, mainBoard:action.payload}
-        case "GET_JOINS_DATA": return {...state, task:[action.payload]}
-        case "GET_PAGINATIONS": return {...state, pagination:action.payload}
-        case "SET_TASK_ID": return {...state, task_id:action.payload}
+        case "SET_SEND_LOADING": return {...state, sendLoading:action.payload};
+        case "SET_GET_BOARDS_LOADING": return {...state, getBoardsLoading:action.payload};
+        case "SET_GET_BYJOINS_LOADING": return {...state, getAllbyJoins:action.payload};
+        case "SET_MAIN_BOARD": return {...state, mainBoard:action.payload};
+        case "GET_JOINS_DATA": return {...state, task:[action.payload]};
+        case "GET_PAGINATIONS": return {...state, pagination:action.payload};
+        case "SET_TASK_ID": return {...state, task_id:action.payload};
+        case "SET_METRICKS": return {...state, metricks:action.payload};
         default: return state;
      }
 };
@@ -88,7 +91,8 @@ const initialState: InitialStateInterface = {
     itemsPerPage:4,
     totalPages:0
   },
-  task_id:0
+  task_id:0,
+  metricks:[]
 };
 
 const Createboards = ({ children }: { children: React.ReactNode }) => {
@@ -213,10 +217,29 @@ const Createboards = ({ children }: { children: React.ReactNode }) => {
         console.log("Wait po")
        }
    }
+
+   const getAllMetricks = async() =>{
+     try{
+        dispatch({type:"SET_GET_BOARDS_LOADING", payload:true});
+        const getdata = await api.get("api/getMetrics");
+
+        if(getdata.status !== 200) return console.log("cannot Fetch!");
+      
+        dispatch({type:"SET_METRICKS",payload:getdata.data.data});
+      
+     }catch(_error){
+      console.log(_error)
+      dispatch({type:"SET_GET_BOARDS_LOADING", payload:false});
+     }
+     finally{
+      dispatch({type:"SET_GET_BOARDS_LOADING", payload:false});
+     }
+   }
    
   const { 
          task,
          task_id, 
+         metricks,
          mainBoard,
          pagination,
          typeCreate, 
@@ -231,6 +254,7 @@ const Createboards = ({ children }: { children: React.ReactNode }) => {
     <contextProvider.Provider
       value={{
         task,
+        metricks,
         task_id,
         dispatch,
         editTAsk,
@@ -248,6 +272,7 @@ const Createboards = ({ children }: { children: React.ReactNode }) => {
         getAllBoards,
         setTypeCreate,
         getAllbyJoins,
+        getAllMetricks,
         getBoardsLoading,
         getAllBoardsByJoins,
       }}
