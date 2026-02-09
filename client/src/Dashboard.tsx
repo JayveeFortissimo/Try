@@ -51,7 +51,7 @@ const Dashboard = () => {
   console.log(complationRate)
   return (
     <div className="min-h-[50rem] container mx-auto p-4">
-      <header className="flex justify-between items-center mb-15">
+      <header className="flex justify-between items-center mb-15 flex-wrap gap-5">
         <h1 className="text-2xl font-bold">Dashboard Page</h1>
         <div className="flex gap-5">
           {btns.map((btn, index) => (
@@ -74,8 +74,8 @@ const Dashboard = () => {
                 <p className="text-md text-gray-500 font-medium">
                   {metrics.name}
                 </p>
-                <div className="text-3xl font-bold">
-                  {metrics.countData ? metrics.name === "Completion Rate"? "": metrics.countData  : <SpinnerCircle2/>}
+                <div className="text-2xl font-bold">
+                  {metrics.countData ? metrics.name === "Completion Rate"? metrics.countData + "%": metrics.countData  : <SpinnerCircle2/>}
                   {metrics.name === "Completion Rate" && <ProgressAnimationDemo  Completion={metrics.countData}/>}
                 </div>
               </div>
