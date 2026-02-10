@@ -10,7 +10,7 @@ const port = process.env.PORT || 3000;
 app.use(cors(
     {
         credentials: true,
-        origin: ['http://localhost:5173', 'https://try-red-eta.vercel.app']
+        origin: ['http://localhost:5173', 'https://try-red-eta.vercel.app', 'https://try-red-eta.vercel.app/', 'https://try-red-eta.vercel.app/']
     }
 ));
 app.use(express.json());
