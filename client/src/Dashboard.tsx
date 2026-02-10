@@ -7,19 +7,28 @@ import Paginations from "@/components/common/Pagination";
 import SkeletoneDynamic from "./components/common/SkeletoneCards";
 import SpinnerCircle2 from "./components/common/SpinnerLoading";
 import ProgressAnimationDemo from "./components/common/ProgressBar";
+import { exportAsJSON, exportCombinedCSV } from "./lib/exportedButtons";
 
 const Dashboard = () => {
-  const { getBoardsLoading, mainBoard, getAllBoards, pagination, dispatch, getAllMetricks, metricks } = useCreating();
+  const {
+    getBoardsLoading,
+    mainBoard,
+    getAllBoards,
+    pagination,
+    dispatch,
+    getAllMetricks,
+    metricks,
+  } = useCreating();
 
   useEffect(() => {
     getAllBoards();
   }, [pagination.current_page]);
 
-  useEffect(()=>{
-   getAllMetricks();
-  },[]);
+  useEffect(() => {
+    getAllMetricks();
+  }, []);
 
-  const complationRate = ((Number(metricks[0]?.done)/Number(metricks[0]?.total_tasks)) * 100);
+  const complationRate = (Number(metricks[0]?.done) / Number(metricks[0]?.total_tasks)) * 100;
 
   const allMetrics: { name: string; countData: number; emoji: string }[] = [
     {
@@ -44,18 +53,28 @@ const Dashboard = () => {
     },
     {
       name: "Completion Rate",
-      countData: complationRate? complationRate as number : 0,
+      countData: complationRate ? (complationRate as number) : 0,
       emoji: "📈",
     },
   ];
-  console.log(complationRate)
+
   return (
     <div className="min-h-[50rem] container mx-auto p-4">
       <header className="flex justify-between items-center mb-15 flex-wrap gap-5">
         <h1 className="text-2xl font-bold">Dashboard Page</h1>
         <div className="flex gap-5">
           {btns.map((btn, index) => (
-            <Button key={index} variant={"outline"}>
+            <Button 
+            key={index} 
+            variant={"outline"}
+            onClick={()=>{
+              if(btn.name === "📤 Export as CSV"){
+           exportCombinedCSV();
+              }else{
+                exportAsJSON();
+              }
+            }}
+            >
               {btn.name}
             </Button>
           ))}
@@ -75,8 +94,18 @@ const Dashboard = () => {
                   {metrics.name}
                 </p>
                 <div className="text-2xl font-bold">
-                  {metrics.countData ? metrics.name === "Completion Rate"? metrics.countData + "%": metrics.countData  : <SpinnerCircle2/>}
-                  {metrics.name === "Completion Rate" && <ProgressAnimationDemo  Completion={metrics.countData}/>}
+                  {metrics.countData ? (
+                    metrics.name === "Completion Rate" ? (
+                      metrics.countData + "%"
+                    ) : (
+                      metrics.countData
+                    )
+                  ) : (
+                    <SpinnerCircle2 />
+                  )}
+                  {metrics.name === "Completion Rate" && (
+                    <ProgressAnimationDemo Completion={metrics.countData} />
+                  )}
                 </div>
               </div>
               <div>
@@ -91,7 +120,9 @@ const Dashboard = () => {
         <p className="mb-5 text-2xl font-bold">All Boards</p>
 
         {getBoardsLoading ? (
-          <SkeletoneDynamic className="w-full min-h-[5rem]" haveGrid={true}/>
+          <SkeletoneDynamic className="w-full min-h-[5rem]" haveGrid={true} />
+        ) : mainBoard.length <= 0 ? (
+          <p className="text-md text-gray-500">No Boards Yet</p>
         ) : (
           <BoardCards
             mainBoard={mainBoard}

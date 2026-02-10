@@ -4,6 +4,10 @@ class MetricsService {
   async allMetricks() {
     return this.repositories.allMetrics();
   }
+
+  async exportedJSONData() {
+    return await this.repositories.exportedJSON();
+  }
 }
 
 export default MetricsService;

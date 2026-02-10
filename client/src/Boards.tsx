@@ -36,7 +36,9 @@ const Boards = () => {
           haveGrid={true}
           typeGrid={true}
         />
-      ) : (
+      ): mainBoard.length <= 0 ? (
+          <p className="text-md text-gray-500">No Boards Yet</p>
+        ) : (
         <BoardCards
           mainBoard={mainBoard}
           classname="w-full min-h-[40rem] flex flex-col gap-4"

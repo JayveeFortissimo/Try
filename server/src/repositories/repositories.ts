@@ -5,6 +5,9 @@ class Repositories {
   private readonly db = databaseConnection;
 
   async selectAllBoards(offset?: number, limit?: number) {
+    if (offset === undefined || limit === undefined) {
+      return (await this.db.query("SELECT * FROM boards")).rows;
+    }
     const result = await this.db.query(
       "SELECT * FROM boards LIMIT $1 OFFSET $2",
       [limit, offset],
@@ -22,7 +25,13 @@ class Repositories {
     return result.rows;
   }
 
-  async selectByJoin(boardId: number) {
+  async selectByJoin(boardId?: number) {
+    if (!boardId) {
+      const allDAta = await this.db.query(
+        "SELECT b.board_id,b.board_name,b.board_subtitle,b.created_at AS board_created_at, b.update_at AS board_update_at, b.color, t.task_id, t.task_name, t.task_subtitle, t.task_description, t.task_status, t.assigned_to, t.task_priority, t.due_date, t.created_at AS task_created_at, t.update_at AS task_update_at FROM boards b LEFT JOIN task t ON b.board_id = t.board_id",
+      );
+      return allDAta.rows;
+    }
     const result = await this.db.query(
       "SELECT  b.board_id,b.board_name,b.board_subtitle,b.created_at AS board_created_at, b.update_at AS board_update_at, b.color, t.task_id, t.task_name, t.task_subtitle, t.task_description, t.task_status, t.assigned_to, t.task_priority, t.due_date, t.created_at AS task_created_at, t.update_at AS task_update_at FROM boards b LEFT JOIN task t ON b.board_id = t.board_id WHERE b.board_id = $1",
       [boardId],
@@ -77,7 +86,6 @@ class Repositories {
     const {
       task_name,
       task_description,
-
       task_status,
       task_priority,
       due_date,
@@ -110,6 +118,19 @@ class Repositories {
       "SELECT COUNT(*) AS total_tasks, SUM(CASE WHEN task_status = 'ToDo' THEN 1 ELSE 0 END) AS todo,  SUM(CASE WHEN task_status = 'Inprogress' THEN 1 ELSE 0 END) AS inprogress,  SUM(CASE WHEN task_status = 'Done' THEN 1 ELSE 0 END) AS done FROM task",
     );
     return allMetrics.rows;
+  }
+
+  async exportedJSON() {
+    const [AllMetrics, AllJoined] = await Promise.all([
+      this.allMetrics(),
+      this.selectByJoin(),
+    ]);
+
+    return {
+      exportedDate: new Date(),
+      Metrics: AllMetrics,
+      Boards: AllJoined,
+    };
   }
 }
 

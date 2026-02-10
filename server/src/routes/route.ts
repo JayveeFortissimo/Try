@@ -31,4 +31,6 @@ route.get("/getAllBoards/:id", Boardcontroller.getByJoin);
 
 route.get("/getMetrics", AllMetricsController.allMetrics);
 
+route.get("/exportedJSON", AllMetricsController.exportedJSONData);
+
 export default route;

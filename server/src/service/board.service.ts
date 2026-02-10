@@ -14,7 +14,7 @@ class BoardService {
     return await this.repositories.selectAllTasks();
   }
 
-  async getByJoin(boardId: number) {
+  async getByJoin(boardId?: number) {
     return await this.repositories.selectByJoin(boardId);
   }
 
